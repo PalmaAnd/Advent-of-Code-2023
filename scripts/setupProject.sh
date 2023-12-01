@@ -18,21 +18,25 @@ for day in {01..25}; do
     mkdir -p "${base_test}"
 
     # Create input and solutions folders
-    mkdir -p "${base_src}/input"
+    mkdir -p "${base_src}/input_A"
+    mkdir -p "${base_src}/input_B"
     # Create sample input files
-    touch "${base_src}/input/example.txt"
-    touch "${base_src}/input/input.txt"
+    touch "${base_src}/input_A/example.txt"
+    touch "${base_src}/input_A/input.txt"
     
+    touch "${base_src}/input_B/example.txt"
+    touch "${base_src}/input_B/input.txt"
+
     mkdir -p "${base_src}/solutions"
     # Create sample solution files
-    touch "${base_src}/solutions/problemA.py"
-    touch "${base_src}/solutions/problemB.py"
+    touch "${base_src}/solutions/problemA.js"
+    touch "${base_src}/solutions/problemB.js"
 
     # Create test files
     mkdir -p "${base_test}/solutions"
     # Create sample solution files
-    touch "${base_test}/solutions/problemA_Test.py"
-    touch "${base_test}/solutions/problemB_Test.py"
+    touch "${base_test}/solutions/problemA_Test.js"
+    touch "${base_test}/solutions/problemB_Test.js"
 
 done
 
