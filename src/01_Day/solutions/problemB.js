@@ -6,7 +6,7 @@ import * as fs from "fs";
  * It looks like some of the digits are actually spelled out with letters: one, two, three, four, five, six, seven, eight, and nine also count as valid "digits".
  * Equipped with this new information, you now need to find the real first and last digit on each line.
  * Goal: the sum of all of the calibration values
- * 
+ *
  * Wrong tries:
  * - 53289
  * - 53264
@@ -53,27 +53,46 @@ calibrations.forEach((calibration) => {
     var line = "";
     for (let index = 0; index < calibration.length; index++) {
         const element = calibration[index];
+        // IDEA: Try looking from the left until I find 1 match, then look from the right until I find 1 match
         if (element >= "0" && element <= "9") {
-            if (firstNumber == "")
-                firstNumber = element;
-            lastNumber = element;
+            if (firstNumber == "") firstNumber = element;
         } else {
-            line += element;
-            for (let j = 0; j < stringNum.length; j++) {
-                if (line.indexOf(stringNum[j]) > -1) {
-                    const startEnd = getStartEnd(line, stringNum[j]);
+            for (var i = 0; i < stringNum.length - 1; i++) {
+                if (line.indexOf(stringNum[i]) > -1  && firstNumber == "") {
+                    const startEnd = getStartEnd(line, stringNum[i]);
                     const sub = line.substring(startEnd[0], startEnd[1] + 1);
                     const temp = stringToInt(sub);
                     if (temp != "0") {
-                        if (firstNumber == "")
-                            firstNumber = temp;
-                        lastNumber = temp;
+                        if (firstNumber == "") firstNumber = temp;
                     }
-                    line = line.replace(sub[0], ""); // Weird workaround for edgecases like eighthree where deleting sub would cause problems
+                } else if (line.lastIndexOf(stringNum[stringNum.length - i - 1]) > -1 && lastNumber == ""){
+                    const startEnd = getStartEnd(line, stringNum[stringNum.length - i - 1]);
+                    const sub = line.substring(startEnd[0], startEnd[1] + 1);
+                    const temp = stringToInt(sub);
+                    if (temp != "0")
+                        lastNumber = temp;       
                 }
             }
         }
+        //     line += element;
+        //     for (let j = 0; j < stringNum.length; j++) {
+        //         if (line.indexOf(stringNum[j]) > -1) {
+        //             const startEnd = getStartEnd(line, stringNum[j]);
+        //             const sub = line.substring(startEnd[0], startEnd[1] + 1);
+        //             const temp = stringToInt(sub);
+        //             if (temp != "0") {
+        //                 if (firstNumber == "")
+        //                     firstNumber = temp;
+        //                 lastNumber = temp;
+        //             }
+        //             line = line.replace(sub[0], ""); // Weird workaround for edgecases like eighthree where deleting sub would cause problems
+        //         }
+        //     }
+        // }
     }
+    if (lastNumber == "") lastNumber = firstNumber;
+    console.log(firstNumber);
+    console.log(lastNumber);
     sum += parseInt(firstNumber + lastNumber);
 });
 
@@ -102,7 +121,6 @@ function stringToInt(number) {
     return "0";
 }
 
-function getStartEnd(str, sub){
-    return [str.indexOf(sub),
-            str.indexOf(sub) + sub.length - 1];
-};
+function getStartEnd(str, sub) {
+    return [str.indexOf(sub), str.indexOf(sub) + sub.length - 1];
+}
