@@ -1,9 +1,39 @@
 import * as fs from "fs";
 
+/**
+ * Problem:
+ * Your calculation isn't quite right.
+ * It looks like some of the digits are actually spelled out with letters: one, two, three, four, five, six, seven, eight, and nine also count as valid "digits".
+ * Equipped with this new information, you now need to find the real first and last digit on each line.
+ * Goal: the sum of all of the calibration values
+ * 
+ * Wrong tries:
+ * - 53289
+ * - 53264
+ * - 53080
+ * - 53227
+ * - 54445
+ */
+
 // Read the content of the file and create a array containing all data, splitted by a new line (\n)
-const input = fs.readFileSync("./../input_B/input.txt", "utf-8");
+const input = fs.readFileSync("./../input_B/example.txt", "utf-8");
 const calibrations = input.split("\n");
 var sum = 0;
+
+/** TODO:  Maybe use something like this:
+ * var stringNum = {
+    "one"   : "1",
+    "two"   : "2",
+    "three" : "3",
+    "four"  : "4",
+    "five"  : "5",
+    "six"   : "6",
+    "seven" : "7",
+    "eight" : "8",
+    "nine"  : "9"
+};
+ */
+
 var stringNum = [
     "one",
     "two",
@@ -16,50 +46,35 @@ var stringNum = [
     "nine",
 ];
 
-const getStartEnd = (str, sub) => [
-    str.indexOf(sub),
-    str.indexOf(sub) + sub.length - 1,
-];
-
 calibrations.forEach((calibration) => {
     var firstNumber = "";
-    var secondNumber = "";
+    var lastNumber = "";
     // Split into subarray and check if it contains either a number or a string
     var line = "";
     for (let index = 0; index < calibration.length; index++) {
         const element = calibration[index];
-        line += element;
         if (element >= "0" && element <= "9") {
-            if (firstNumber == "") {
+            if (firstNumber == "")
                 firstNumber = element;
-            } else {
-                secondNumber = element;
-            }
-            line = line.replace(element, "");
+            lastNumber = element;
         } else {
+            line += element;
             for (let j = 0; j < stringNum.length; j++) {
                 if (line.indexOf(stringNum[j]) > -1) {
                     const startEnd = getStartEnd(line, stringNum[j]);
                     const sub = line.substring(startEnd[0], startEnd[1] + 1);
                     const temp = stringToInt(sub);
                     if (temp != "0") {
-                        if (firstNumber == "") {
+                        if (firstNumber == "")
                             firstNumber = temp;
-                        } else {
-                            secondNumber = temp;
-                        }
+                        lastNumber = temp;
                     }
-                    line = line.replace(sub, "");
+                    line = line.replace(sub[0], ""); // Weird workaround for edgecases like eighthree where deleting sub would cause problems
                 }
             }
         }
     }
-
-    // If only 1 number was given
-    if (secondNumber == "") {
-        secondNumber = firstNumber;
-    }
-    sum += parseInt(firstNumber + secondNumber);
+    sum += parseInt(firstNumber + lastNumber);
 });
 
 console.log(sum);
@@ -86,3 +101,8 @@ function stringToInt(number) {
     }
     return "0";
 }
+
+function getStartEnd(str, sub){
+    return [str.indexOf(sub),
+            str.indexOf(sub) + sub.length - 1];
+};
