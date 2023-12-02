@@ -7,16 +7,18 @@ import * as fs from "fs";
  * Equipped with this new information, you now need to find the real first and last digit on each line.
  * Goal: the sum of all of the calibration values
  *
- * Wrong tries:
+ * Tries:
  * - 53289
  * - 53264
  * - 53080
  * - 53227
  * - 54445
+ * - 53236
+ * - 53536
  */
 
 // Read the content of the file and create a array containing all data, splitted by a new line (\n)
-const input = fs.readFileSync("./../input_B/example.txt", "utf-8");
+const input = fs.readFileSync("./../input_B/input.txt", "utf-8");
 const calibrations = input.split("\n");
 var sum = 0;
 
@@ -54,41 +56,25 @@ calibrations.forEach((calibration) => {
     for (let index = 0; index < calibration.length; index++) {
         const element = calibration[index];
         // IDEA: Try looking from the left until I find 1 match, then look from the right until I find 1 match
-        if (element >= "0" && element <= "9") {
+        if (element >= "0" && element <= "9" && firstNumber == "") {
             if (firstNumber == "") firstNumber = element;
         } else {
-            for (var i = 0; i < stringNum.length - 1; i++) {
-                if (line.indexOf(stringNum[i]) > -1  && firstNumber == "") {
-                    const startEnd = getStartEnd(line, stringNum[i]);
+            line += element;
+            var lastElem = 0;
+            for (let j = 0; j < stringNum.length; j++) {
+                if (line.lastIndexOf(stringNum[j]) > lastElem) {
+                    lastElem = line.lastIndexOf(stringNum[j]);
+                    const startEnd = getStartEnd(line, stringNum[j]);
                     const sub = line.substring(startEnd[0], startEnd[1] + 1);
                     const temp = stringToInt(sub);
                     if (temp != "0") {
-                        if (firstNumber == "") firstNumber = temp;
+                        if (firstNumber == "")
+                            firstNumber = temp;
+                        lastNumber = temp;
                     }
-                } else if (line.lastIndexOf(stringNum[stringNum.length - i - 1]) > -1 && lastNumber == ""){
-                    const startEnd = getStartEnd(line, stringNum[stringNum.length - i - 1]);
-                    const sub = line.substring(startEnd[0], startEnd[1] + 1);
-                    const temp = stringToInt(sub);
-                    if (temp != "0")
-                        lastNumber = temp;       
                 }
             }
         }
-        //     line += element;
-        //     for (let j = 0; j < stringNum.length; j++) {
-        //         if (line.indexOf(stringNum[j]) > -1) {
-        //             const startEnd = getStartEnd(line, stringNum[j]);
-        //             const sub = line.substring(startEnd[0], startEnd[1] + 1);
-        //             const temp = stringToInt(sub);
-        //             if (temp != "0") {
-        //                 if (firstNumber == "")
-        //                     firstNumber = temp;
-        //                 lastNumber = temp;
-        //             }
-        //             line = line.replace(sub[0], ""); // Weird workaround for edgecases like eighthree where deleting sub would cause problems
-        //         }
-        //     }
-        // }
     }
     if (lastNumber == "") lastNumber = firstNumber;
     console.log(firstNumber);
